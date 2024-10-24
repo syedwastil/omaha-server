@@ -1,3 +1,5 @@
 *.pem
 *.info
 **/secrets/*
+
+**/env/*
