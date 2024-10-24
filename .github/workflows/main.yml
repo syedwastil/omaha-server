@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -39,6 +39,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /home/ubuntu/omaha-server
-            git pull origin master
+            git pull origin main
             docker-compose pull
             docker-compose up -d --remove-orphans
