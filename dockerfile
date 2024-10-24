@@ -8,19 +8,23 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt /app/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Copy project
-COPY . /app/
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run migrations during container build (not recommended for production)
+RUN python manage.py makemigrations && python manage.py migrate
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Expose port
+# Create a user to run the application
+RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('USAdmin', 'raai.backend@gmail.com', 'Raaibackend1!')" | python manage.py shell
+
+# Make port 8000 available to the world outside this container
 EXPOSE 8000
 
-# Start Gunicorn
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Define the command to run on container start
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

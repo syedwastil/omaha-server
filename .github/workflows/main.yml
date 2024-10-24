@@ -27,4 +27,5 @@ jobs:
             cd /home/ubuntu/omaha-server
             git pull origin main
             docker image prune -a --force
+            docker-compose down
             docker-compose up -d --remove-orphans
