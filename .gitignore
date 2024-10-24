@@ -4,4 +4,25 @@
 
 **/env/*
 
+
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+
+*.py[cod]
+*$py.class
+
+/static/
+/media/
+
+venv/
+.env
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
 *.sqlite3*
