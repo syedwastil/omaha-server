@@ -19,23 +19,10 @@ services:
       - POSTGRES_USER=postgre
       - POSTGRES_PASSWORD=passpostgre
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - static_volume:/app/static
-      - media_volume:/app/media
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-    depends_on:
-      - web
+
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
-  certbot-etc:
-  certbot-var:
+
