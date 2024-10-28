@@ -10,3 +10,5 @@ django-ace==1.36.2
 django-suit==0.2.28
 django-tinymce==4.1.0
 celery==5.4.0
+python-dotenv==1.0.1
+Pillow==11.0.0

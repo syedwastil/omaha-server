@@ -30,7 +30,7 @@ from celery import signature
 from jsonfield import JSONField
 
 from omaha.models import BaseModel
-from omaha_server.utils import storage_with_spaces_instance
+from config.utils import storage_with_spaces_instance
 from crash.managers import CrashManager, SymbolsManager
 
 
