@@ -21,7 +21,7 @@ import copy
 
 from django.contrib import admin
 from django.contrib.admin import utils
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from dynamic_preferences.models import GlobalPreferenceModel
 from versionfield import VersionField
@@ -78,7 +78,7 @@ class VersionAdmin(admin.ModelAdmin):
 
 def my_display_for_field(value, field, *args, **kwargs):
     if isinstance(field, VersionField):
-        return smart_text(value)
+        return smart_str(value)
     return django_display_for_field(value, field, *args, **kwargs)
 
 

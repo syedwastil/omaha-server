@@ -37,6 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'django_extensions',
+    'versionfield',
+    'dynamic_preferences',
+
+    'omaha',
+    # 'crash',
+    # 'feedback',
+    'sparkle',
+    'downloads',
+    'healthcheck',
 ]
 
 MIDDLEWARE = [

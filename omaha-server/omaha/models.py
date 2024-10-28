@@ -19,8 +19,6 @@ the License.
 """
 
 
-from django.utils.encoding import python_2_unicode_compatible
-
 import os
 import hashlib
 import base64
@@ -33,7 +31,14 @@ from django.utils.timezone import now as datetime_now
 
 from omaha.managers import VersionManager
 from omaha.fields import PercentField
-from omaha_server.s3utils import public_read_storage
+# Comment out S3 import for later use
+# from omaha_server.s3utils import public_read_storage
+
+# Add default Django storage
+from django.core.files.storage import FileSystemStorage
+
+# Define default storage
+default_storage = FileSystemStorage()
 
 from django_extensions.db.fields import (
     CreationDateTimeField, ModificationDateTimeField,
@@ -57,7 +62,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-@python_2_unicode_compatible
 class Application(BaseModel):
     id = models.CharField(max_length=38, primary_key=True)
     name = models.CharField(verbose_name='App', max_length=30, unique=True)
@@ -70,7 +74,7 @@ class Application(BaseModel):
         return self.name
 
 
-@python_2_unicode_compatible
+
 class Platform(BaseModel):
     name = models.CharField(verbose_name='Platform', max_length=10, unique=True, db_index=True)
     verbose_name = models.CharField(max_length=20, blank=True)
@@ -82,7 +86,6 @@ class Platform(BaseModel):
         return self.name
 
 
-@python_2_unicode_compatible
 class Channel(BaseModel):
     name = models.CharField(verbose_name='Channel', max_length=10, unique=True, db_index=True)
 
@@ -102,7 +105,6 @@ def _version_upload_to(*args, **kwargs):
     return version_upload_to(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class Version(BaseModel):
     is_enabled = models.BooleanField(default=True)
     is_critical = models.BooleanField(default=False)
@@ -111,10 +113,15 @@ class Version(BaseModel):
     channel = models.ForeignKey(Channel, db_index=True, on_delete=models.CASCADE)
     version = VersionField(help_text='Format: 255.255.65535.65535', number_bits=(8, 8, 16, 16), db_index=True)
     release_notes = models.TextField(blank=True, null=True)
-    file = models.FileField(upload_to=_version_upload_to, null=True,
-                            storage=public_read_storage)
+    # Modified file field to use default storage instead of S3
+    file = models.FileField(
+        upload_to=_version_upload_to, 
+        null=True,
+        storage=default_storage  # Changed from public_read_storage to default_storage
+        # storage=public_read_storage  # Uncomment this line when switching to S3
+    )
     file_hash = models.CharField(verbose_name='Hash', max_length=140,
-                                 null=True, blank=True)
+                                null=True, blank=True)
     file_size = models.PositiveIntegerField(null=True, blank=True)
 
     objects = VersionManager()
@@ -124,9 +131,9 @@ class Version(BaseModel):
         unique_together = (
             ('app', 'platform', 'channel', 'version'),
         )
-        index_together = (
-            ('app', 'platform', 'channel', 'version'),
-        )
+        indexes = [
+            models.Index(fields=['app', 'platform', 'channel', 'version'])
+        ]
         ordering = ['id']
 
     def __str__(self):
@@ -348,3 +355,4 @@ def pre_version_delete(sender, instance, **kwargs):
     storage, name = instance.file.storage, instance.file.name
     if name:
         storage.delete(name)
+

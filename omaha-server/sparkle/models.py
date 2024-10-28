@@ -19,7 +19,6 @@ the License.
 """
 
 
-from django.utils.encoding import python_2_unicode_compatible
 
 import os
 
@@ -31,14 +30,21 @@ from versionfield import VersionField
 
 from omaha.models import BaseModel, Application, Channel
 from sparkle.managers import VersionManager
-from omaha_server.s3utils import public_read_storage
+# Comment out S3 import for later use
+# from omaha_server.s3utils import public_read_storage
+
+# Add default Django storage
+from django.core.files.storage import FileSystemStorage
+# Define default storage
+default_storage = FileSystemStorage()
 
 
 def version_upload_to(obj, filename):
     return os.path.join('sparkle', obj.app.name, obj.channel.name, str(obj.version), filename)
 
+def _version_upload_to(*args, **kwargs):
+    return version_upload_to(*args, **kwargs)
 
-@python_2_unicode_compatible
 class SparkleVersion(BaseModel):
     is_enabled = models.BooleanField(default=True)
     is_critical = models.BooleanField(default=False)
@@ -51,8 +57,13 @@ class SparkleVersion(BaseModel):
     minimum_system_version = VersionField(help_text='Format: 255.255.255',
                                           number_bits=(8, 8, 8), blank=True, null=True)
     release_notes = models.TextField(blank=True, null=True)
-    file = models.FileField(upload_to=version_upload_to, null=True,
-                            storage=public_read_storage)
+     # Modified file field to use default storage instead of S3
+    file = models.FileField(
+        upload_to=_version_upload_to, 
+        null=True,
+        storage=default_storage  # Changed from public_read_storage to default_storage
+        # storage=public_read_storage  # Uncomment this line when switching to S3
+    )
     file_size = models.PositiveIntegerField(null=True, blank=True)
     dsa_signature = models.CharField(verbose_name='DSA signature',
                                      max_length=140, null=True, blank=True)
@@ -60,8 +71,8 @@ class SparkleVersion(BaseModel):
     objects = VersionManager()
 
     class Meta:
-        index_together = (
-            ('app', 'channel'),
+        indexes = (
+            models.Index(fields=['app', 'channel']),
         )
         unique_together = (
             ('app', 'channel', 'version'),
