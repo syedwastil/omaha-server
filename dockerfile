@@ -15,16 +15,16 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run migrations during container build (not recommended for production)
-RUN python manage.py makemigrations && python manage.py migrate
+RUN python omaha-server/manage.py makemigrations && python omaha-server/manage.py migrate
 
 # Collect static files
-RUN python manage.py collectstatic --noinput
+RUN python omaha-server/manage.py collectstatic --noinput
 
 # Create a user to run the application
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('USAdmin', 'raai.backend@gmail.com', 'Raaibackend1!')" | python manage.py shell
+RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('USAdmin', 'raai.backend@gmail.com', 'Raaibackend1!')" | python omaha-server/manage.py shell
 
 # Make port 8000 available to the world outside this container
 EXPOSE 8000
 
 # Define the command to run on container start
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "omaha-server/manage.py", "runserver", "0.0.0.0:8000"]
