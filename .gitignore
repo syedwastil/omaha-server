@@ -14,7 +14,7 @@ local_settings.py
 *.py[cod]
 *$py.class
 
-/static/
+**/static/*
 /media/
 
 venv/
