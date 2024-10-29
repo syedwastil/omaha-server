@@ -27,7 +27,7 @@ jobs:
             cd /home/ubuntu/omaha-server
             git pull origin main
             # Stop and remove all running containers
-            docker-compose down
+            docker-compose down web
             # Remove the omaha-server_web image
             docker rmi omaha-server_web || true
             # Build and start the containers

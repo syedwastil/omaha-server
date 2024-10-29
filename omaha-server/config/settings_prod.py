@@ -4,7 +4,7 @@ from .settings import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*','13.234.67.113']
 
 DATABASES = {
     'default': {
