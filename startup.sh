@@ -9,6 +9,5 @@ docker-compose up -d --build --remove-orphans
 sleep 3
 
 docker-compose exec -T web python omaha-server/manage.py migrate
-docker-compose exec -T web python omaha-server/manage.py collectstatic
 docker-compose exec -T web python omaha-server/createadmin.py
  
