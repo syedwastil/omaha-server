@@ -6,6 +6,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*','13.234.67.113']
 
+
+#Postgress db for production
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

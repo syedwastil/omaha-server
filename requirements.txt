@@ -13,3 +13,5 @@ celery==5.4.0
 python-dotenv==1.0.1
 Pillow==11.0.0
 psycopg2-binary
+boto3==1.35.51
+django-storages==1.14.4

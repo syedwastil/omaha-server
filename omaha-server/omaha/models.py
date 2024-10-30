@@ -22,6 +22,7 @@ the License.
 import os
 import hashlib
 import base64
+import logging
 
 from django.db import models
 from django.conf import settings
@@ -46,6 +47,7 @@ from django_extensions.db.fields import (
 from jsonfield import JSONField
 from versionfield import VersionField
 from furl import furl
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 __all__ = ['Application', 'Channel', 'Platform', 'Version',
@@ -117,8 +119,8 @@ class Version(BaseModel):
     file = models.FileField(
         upload_to=_version_upload_to, 
         null=True,
-        storage=default_storage  # Changed from public_read_storage to default_storage
-        # storage=public_read_storage  # Uncomment this line when switching to S3
+        storage=S3Boto3Storage(),  
+        blank=True
     )
     file_hash = models.CharField(verbose_name='Hash', max_length=140,
                                 null=True, blank=True)
@@ -162,6 +164,24 @@ class Version(BaseModel):
     @property
     def size(self):
         return self.file_size
+
+    def get_file_url(self):
+        """Generate a temporary URL for file download"""
+        if self.file:
+            try:
+                s3_client = self.file.storage.connection
+                return s3_client.generate_presigned_url(
+                    'get_object',
+                    Params={
+                        'Bucket': self.file.storage.bucket_name,
+                        'Key': self.file.name
+                    },
+                    ExpiresIn=3600  # URL valid for 1 hour
+                )
+            except Exception as e:
+                logger.error(f"Error generating presigned URL: {str(e)}")
+                return None
+        return None
 
 
 EVENT_DICT_CHOICES = dict(

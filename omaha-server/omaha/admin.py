@@ -69,11 +69,20 @@ class PartialUpdateInline(admin.StackedInline):
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):
     inlines = (ActionInline, PartialUpdateInline,)
-    list_display = ('created', 'modified', 'app', 'version', 'channel', 'platform', 'is_enabled', 'is_critical',)
-    list_display_links = ('created', 'modified', 'version',)
+    list_display = ( 'app', 'version', 'channel', 'platform','created', 'modified', 'is_enabled', 'is_critical',)
+    list_display_links = ('app', 'version',)
     list_filter = ('channel__name', 'platform__name', 'app__name',)
     readonly_fields = ('file_hash',)
     form = VersionAdminForm
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file', False)
+        if file:
+            if file.size > 200 * 1024 * 1024:
+                raise forms.ValidationError("File size exceeds 200 MB.")
+            if not file.name.endswith(('.exe')):  
+                raise forms.ValidationError("Unsupported file type.")
+        return file
 
 
 def my_display_for_field(value, field, *args, **kwargs):

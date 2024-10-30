@@ -27,6 +27,7 @@ from omaha.widgets import CustomTinyMCE
 from celery import signature
 
 from omaha.models import Application, Version, Action, Data
+import logging
 
 
 __all__ = ['ApplicationAdminForm', 'VersionAdminForm', 'ActionAdminForm', 'DataAdminForm']
@@ -66,6 +67,24 @@ class VersionAdminForm(ModelForm):
             raise ValidationError('')
         _file = self.cleaned_data["file"]
         return _file.size
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        if file:
+            try:
+                # Validate file size
+                if file.size > 200 * 1024 * 1024:  # 200MB limit
+                    raise ValidationError("File size exceeds 200 MB.")
+                
+                # Validate file type
+                if not file.name.endswith('.exe'):
+                    raise ValidationError("Only .exe files are allowed.")
+                
+                return file
+            except Exception as e:
+                logger.error(f"File validation error: {str(e)}")
+                raise ValidationError(f"Error processing file: {str(e)}")
+        return file
 
 
 class ActionAdminForm(ModelForm):
