@@ -2,11 +2,10 @@
 
 from .settings import *
 
-DEBUG = False
-
+DEBUG = True
+print('static root is :',STATIC_ROOT)
+print('base_dir is :',BASE_DIR)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-print("In settings_dev.py")
 # Development database (SQLite)
 DATABASES = {
     'default': {

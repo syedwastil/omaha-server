@@ -2,7 +2,7 @@
 
 from .settings import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*','13.234.67.113']
 
