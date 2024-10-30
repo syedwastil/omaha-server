@@ -15,6 +15,7 @@ local_settings.py
 *$py.class
 
 **/static/*
+**/build/*
 /media/
 
 venv/

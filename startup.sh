@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Stop and remove all running containers
-docker-compose down web || true
+docker-compose down || true
 # Remove the omaha-server_web image
 docker rmi omaha-server_web || true
 # Build and start the containers
