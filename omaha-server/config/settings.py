@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'cacheops',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -167,3 +168,55 @@ AWS_S3_VERIFY = True
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 import config.jazmin_settings
+
+
+#Redis Settings
+REDIS_PORT = os.getenv('REDIS_PORT', 6379)
+REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
+REDIS_AUTH = 'redis://:{}@'.format(REDIS_PASSWORD) if REDIS_PASSWORD else 'redis://'
+
+REDIS_STAT_PORT = os.getenv('REDIS_STAT_PORT', REDIS_PORT)
+REDIS_STAT_HOST = os.getenv('REDIS_STAT_HOST', REDIS_HOST)
+REDIS_STAT_DB = os.getenv('REDIS_STAT_DB', 15)
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': '{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'.format(
+            REDIS_AUTH=REDIS_AUTH,
+            REDIS_PORT=REDIS_PORT,
+            REDIS_HOST=REDIS_HOST,
+            REDIS_DB=os.getenv('REDIS_DB', 1)),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    },
+    'statistics': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': '{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'.format(
+            REDIS_AUTH=REDIS_AUTH,
+            REDIS_PORT=REDIS_STAT_PORT,
+            REDIS_HOST=REDIS_STAT_HOST,
+            REDIS_DB=REDIS_STAT_DB),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# Cache
+
+CACHEOPS_REDIS = {
+    'host': REDIS_HOST,
+    'port': REDIS_PORT,
+    'db': 1,
+    'socket_timeout': 3,
+    'password': REDIS_PASSWORD or '',
+}
+
+CACHEOPS = {
+    'omaha.*': {'ops': (), 'timeout': 10},
+    'sparkle.*': {'ops': (), 'timeout': 10},
+    'crash.*': {'ops': (), 'timeout': 10},
+}

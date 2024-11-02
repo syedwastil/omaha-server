@@ -19,6 +19,12 @@ services:
       - POSTGRES_USER=postgre
       - POSTGRES_PASSWORD=passpostgre
 
+  redis:
+    restart: always
+    image: redis:5
+    ports:
+      - "6379:6379"
+
 
 
 volumes:

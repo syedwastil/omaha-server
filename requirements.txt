@@ -15,3 +15,7 @@ Pillow==11.0.0
 psycopg2-binary
 boto3==1.35.51
 django-storages==1.14.4
+lxml==5.3.0
+django-cacheops==7.1
+singledispatch==4.1.0
+django-redis==5.4.0
