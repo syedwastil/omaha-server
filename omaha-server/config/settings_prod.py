@@ -6,7 +6,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*','13.234.67.113']
 CSRF_TRUSTED_ORIGINS = [
-    'https://ranadrivingschool.org',
+    'https://ranadrivingschool.org'
 ]
 CSRF_COOKIE_SECURE = True  
 CSRF_COOKIE_SAMESITE = 'Lax'
