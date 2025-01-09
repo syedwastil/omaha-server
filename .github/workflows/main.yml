@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ file-upload ]
 
 jobs:
   build:
@@ -24,11 +24,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/omaha-server
-            git pull origin main
-            # Stop and remove all running containers
-            docker-compose down web
-            # Remove the omaha-server_web image
-            docker rmi omaha-server_web || true
-            # Build and start the containers
-            docker-compose up -d --build --remove-orphans
+            cd /home/ubuntu/s3
+            git pull origin file-upload
+
