@@ -24,13 +24,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-<<<<<<< HEAD
-            cd /home/ubuntu/omaha-server
-            git pull origin main
-            chmod +x startup.sh
-            ./startup.sh
-=======
             cd /home/ubuntu/s3
             git pull origin file-upload
 
->>>>>>> 3e4eaa8102d5845c2b167ad5a30fd716471e6e16
